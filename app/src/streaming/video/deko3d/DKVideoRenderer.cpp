@@ -239,10 +239,9 @@ void DKVideoRenderer::draw(NVGcontext* vg, int width, int height, AVFrame* frame
         m_video_render_stats.measurement_start_timestamp = before_render;
     }
 
-    // Finish off this command list
-    // queue = vctx->getQueue();
+   
     queue.submitCommands(cmdlist);
-    queue.waitIdle();
+    queue.flush();
 
     frames++;
     timeCount += LiGetMillis() - before_render;
