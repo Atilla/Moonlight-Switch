@@ -19,7 +19,6 @@ class SettingsTab : public brls::Box {
     BRLS_BIND(brls::SelectorCell, codec, "codec");
     BRLS_BIND(brls::BooleanCell, requestHdr, "request_hdr");
     BRLS_BIND(brls::SelectorCell, decoder, "decoder");
-    BRLS_BIND(brls::BooleanCell, hwDecoding, "use_hw_decoding");
     BRLS_BIND(brls::Header, header, "header");
     BRLS_BIND(brls::Slider, slider, "slider");
     BRLS_BIND(brls::SelectorCell, audioBackend, "audio_backend");

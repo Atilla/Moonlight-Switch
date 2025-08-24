@@ -188,7 +188,7 @@ int FFmpegVideoDecoder::setup(int video_format, int width, int height,
         AVHWDeviceType hwType = AV_HWDEVICE_TYPE_NONE;
 #endif
 
-    if (Settings::instance().use_hw_decoding() && hwType != AV_HWDEVICE_TYPE_NONE) {
+    if (hwType != AV_HWDEVICE_TYPE_NONE) {
         if ((err = av_hwdevice_ctx_create(&hw_device_ctx, hwType, nullptr, nullptr, 0)) < 0) {
             char error[512];
             av_strerror(err, error, sizeof(error));
@@ -197,7 +197,7 @@ int FFmpegVideoDecoder::setup(int video_format, int width, int height,
         }
         m_decoder_context->hw_device_ctx = av_buffer_ref(hw_device_ctx);
     } else {
-        brls::Logger::warning("FFmpeg: HW decoding disabled or unsupported by Platform");
+        brls::Logger::warning("FFmpeg: HW decoding unsupported by Platform");
     }
 
     brls::Logger::info("FFmpeg: Setup done!");

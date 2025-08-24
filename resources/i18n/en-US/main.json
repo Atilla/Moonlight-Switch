@@ -148,7 +148,6 @@
         "swap_ui": "Swap / and / for UI",
         "system_button_duplication_error": "Another action already use this system button.",
         "touchscreen_mouse_mode": "Touchscreen mode",
-        "use_hw_decoding": "Enable hardware acceleration",
         "use_system_button": "Use system button",
         "usops": "Use Streaming Optimal Playable Settings",
         "video_bitrate": "Video bitrate",

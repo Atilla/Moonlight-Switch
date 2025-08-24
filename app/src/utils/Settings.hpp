@@ -137,8 +137,6 @@ class Settings : public Singleton<Settings> {
     void set_volume(int volume) { m_volume = volume; }
     [[nodiscard]] int get_volume() const { return m_volume; }
 
-    void set_use_hw_decoding(bool hw_decoding) { m_use_hw_decoding = hw_decoding; }
-    [[nodiscard]] bool use_hw_decoding() const { return true; } //m_use_hw_decoding; }
 
     void set_keyboard_type(KeyboardType type) { m_keyboard_type = type; }
     [[nodiscard]] KeyboardType get_keyboard_type() const { return m_keyboard_type; }
@@ -201,7 +199,6 @@ class Settings : public Singleton<Settings> {
     bool m_swap_mouse_scroll = false;
     int m_rumble_force = 100;
     int m_volume = 100;
-    bool m_use_hw_decoding = true;
     KeyboardType m_keyboard_type = COMPACT;
     ButtonOverrideType m_overlay_system_button = ButtonOverrideType::NONE;
     ButtonOverrideType m_guide_system_button = ButtonOverrideType::NONE;

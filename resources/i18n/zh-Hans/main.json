@@ -148,7 +148,6 @@
         "swap_ui": "在主画面中对调/和/按键",
         "system_button_duplication_error": "系统按键被占用",
         "touchscreen_mouse_mode": "触摸屏模式",
-        "use_hw_decoding": "启用硬件加速",
         "use_system_button": "使用系统按键",
         "usops": "使用串流优化设置",
         "video_bitrate": "视频码率",

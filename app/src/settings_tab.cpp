@@ -135,10 +135,7 @@ SettingsTab::SettingsTab() {
     requestHdr->removeFromSuperView(true);
  #endif
 
-    hwDecoding->init("settings/use_hw_decoding"_i18n, Settings::instance().use_hw_decoding(),
-                     [](bool value) { Settings::instance().set_use_hw_decoding(value); });
 
-    hwDecoding->setEnabled(false);
 
 #if defined(PLATFORM_SWITCH)
     const float mbpsMaxLimit = 100000;

@@ -34,8 +34,6 @@
             <brls:BooleanCell
                 id="request_hdr"/>
                 
-            <brls:BooleanCell
-                id="use_hw_decoding"/>
 
             <brls:Header
                 id="header"
