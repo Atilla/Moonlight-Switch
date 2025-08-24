@@ -5,7 +5,7 @@
 //  Created by Даниил Виноградов on 27.05.2021.
 //
 
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
 #include <borealis/platforms/switch/switch_input.hpp>
 #endif
 

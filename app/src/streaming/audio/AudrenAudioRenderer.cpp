@@ -1,4 +1,4 @@
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
 
 #include "AudrenAudioRenderer.hpp"
 #include <Settings.hpp>
@@ -251,4 +251,4 @@ void AudrenAudioRenderer::write_audio(const void* buf, size_t size) {
     }
 }
 
-#endif //__SWITCH__
+#endif // PLATFORM_SWITCH

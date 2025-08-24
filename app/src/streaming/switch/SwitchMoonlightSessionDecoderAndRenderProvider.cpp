@@ -3,11 +3,11 @@
 #include "Settings.hpp"
 #include "SDLAudiorenderer.hpp"
 
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
 #include "AudrenAudioRenderer.hpp"
 #endif
 
-#ifdef BOREALIS_USE_DEKO3D
+#ifdef PLATFORM_SWITCH
 #include "DKVideoRenderer.hpp"
 #elif defined(USE_METAL_RENDERER)
 #include "MetalVideoRenderer.hpp"
@@ -24,7 +24,7 @@ SwitchMoonlightSessionDecoderAndRenderProvider::video_decoder() {
 
 IVideoRenderer*
 SwitchMoonlightSessionDecoderAndRenderProvider::video_renderer() {
-#ifdef BOREALIS_USE_DEKO3D
+#ifdef PLATFORM_SWITCH
     return new DKVideoRenderer();
 #elif defined(USE_METAL_RENDERER)
     return new MetalVideoRenderer();
@@ -35,7 +35,7 @@ SwitchMoonlightSessionDecoderAndRenderProvider::video_renderer() {
 
 IAudioRenderer*
 SwitchMoonlightSessionDecoderAndRenderProvider::audio_renderer() {
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
     if (Settings::instance().audio_backend() == SDL) {
         return new SDLAudioRenderer();
     } else {

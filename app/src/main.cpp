@@ -6,7 +6,7 @@
 //
 
 // Switch include only necessary for demo videos recording
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
 #include <switch.h>
 #endif
 
@@ -40,7 +40,7 @@ using namespace brls::literals; // for _i18n
 
 int main(int argc, char* argv[]) {
     // Enable recording for Twitter memes
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
     appletInitializeGamePlayRecording();
     appletSetWirelessPriorityMode(AppletWirelessPriorityMode_OptimizedForWlan);
 
@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Exit
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
     nvExit();
 #elif defined(PLATFORM_TVOS)
     exit(0);

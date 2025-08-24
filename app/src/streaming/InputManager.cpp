@@ -1,5 +1,5 @@
 
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
 #include <switch.h>
 #endif
 
@@ -245,7 +245,7 @@ GamepadState MoonlightInputManager::getControllerState(int controllerNum,
     SET_GAME_PAD_STATE(LEFT_FLAG, brls::BUTTON_LEFT);
     SET_GAME_PAD_STATE(RIGHT_FLAG, brls::BUTTON_RIGHT);
 
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
     SET_GAME_PAD_STATE(A_FLAG, b);
     SET_GAME_PAD_STATE(B_FLAG, a);
     SET_GAME_PAD_STATE(X_FLAG, y);

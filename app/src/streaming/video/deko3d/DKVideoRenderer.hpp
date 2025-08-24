@@ -1,4 +1,4 @@
-#if defined(__SWITCH__) && defined(BOREALIS_USE_DEKO3D)
+#ifdef PLATFORM_SWITCH
 
 #pragma once
 #include "IVideoRenderer.hpp"
@@ -68,4 +68,4 @@ class DKVideoRenderer : public IVideoRenderer {
     VideoRenderStats m_video_render_stats = {};
 };
 
-#endif // __SWITCH__
+#endif // PLATFORM_SWITCH

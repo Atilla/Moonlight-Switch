@@ -3,7 +3,7 @@
 
 #include <utility>
 
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
 #include <switch.h>
 #endif
 

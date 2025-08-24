@@ -5,7 +5,7 @@
 #include <cerrno>
 #include <cstring>
 
-#if defined(__linux) || defined(__APPLE__) || defined(__SWITCH__) || defined(__vita__)
+#if defined(__linux) || defined(__APPLE__) || defined(PLATFORM_SWITCH) || defined(__vita__)
 #define UNIX_SOCKS
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -22,7 +22,7 @@
 
 #endif
 
-#if defined(__SWITCH__)
+#if defined(PLATFORM_SWITCH)
 #include <switch.h>
 #endif
 
@@ -100,7 +100,7 @@ GSResult<bool> send_packet_unix(const Host& host, const Data& payload) {
 
     // Set server end point (the broadcast addres)
     udpServer.sin_family = AF_INET;
-#if defined(__SWITCH__)
+#if defined(PLATFORM_SWITCH)
     uint32_t ip, subnet_mask;
     // Get the current IP address and subnet mask to calculate subnet broadcast address
     nifmGetCurrentIpConfigInfo(&ip, &subnet_mask, nullptr, nullptr, nullptr);
@@ -153,7 +153,7 @@ GSResult<bool> send_packet_win32(const Host& host, const Data& payload) {
 
     // Set server end point (the broadcast addres)
     udpServer.sin_family = AF_INET;
-#if defined(__SWITCH__)
+#if defined(PLATFORM_SWITCH)
     uint32_t ip, subnet_mask;
     // Get the current IP address and subnet mask to calculate subnet broadcast address
     nifmGetCurrentIpConfigInfo(&ip, &subnet_mask, nullptr, nullptr, nullptr);

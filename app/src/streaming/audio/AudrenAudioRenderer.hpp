@@ -1,4 +1,4 @@
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
 
 #include "IAudioRenderer.hpp"
 #include <opus/opus_multistream.h>
@@ -47,4 +47,4 @@ class AudrenAudioRenderer : public IAudioRenderer {
     const int m_latency = 5;
 };
 
-#endif // __SWITCH__
+#endif // PLATFORM_SWITCH

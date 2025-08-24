@@ -13,7 +13,7 @@ std::string getVideoCodecName(VideoCodec codec);
 
 enum AudioBackend : int {
     SDL,
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
     AUDREN,
 #endif
 };

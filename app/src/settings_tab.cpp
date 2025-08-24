@@ -35,7 +35,7 @@ using namespace brls::literals;
 
 std::vector<std::string> audio_backends {
     "SDL2",
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
     "Audren",
 #endif
 };

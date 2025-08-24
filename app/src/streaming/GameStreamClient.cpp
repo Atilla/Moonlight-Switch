@@ -20,7 +20,7 @@
 #include <sys/ioctl.h>
 #endif
 
-#if defined(__SWITCH__)
+#if defined(PLATFORM_SWITCH)
 #include <switch.h>
 
 // TODO: Remove when presented in LibNX
@@ -56,7 +56,7 @@ static uint32_t get_my_ip_address() {
     close(fd);
 
     address = ((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr.s_addr;
-#elif defined(__SWITCH__)
+#elif defined(PLATFORM_SWITCH)
     nifmGetCurrentIpAddress(&address);
 #endif
     return address;

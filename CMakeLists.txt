@@ -29,7 +29,7 @@ include(${EXTERN_PATH}/cmake/toolchain.cmake)
 if (PLATFORM_IOS OR PLATFORM_TVOS)
 #    set(USE_METAL_RENDERER ON)
      set(USE_GL_RENDERER ON)
-else()
+elseif (NOT PLATFORM_SWITCH)
     set(USE_GL_RENDERER ON)
 endif ()
 

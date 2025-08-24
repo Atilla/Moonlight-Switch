@@ -63,7 +63,7 @@ void LogManager::installCrashHandlers() {
     signal(SIGBUS, crashSignalHandler);   // Bus error
     signal(SIGILL, crashSignalHandler);   // Illegal instruction
     
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
     // Additional Switch-specific signals if needed
     signal(SIGTERM, crashSignalHandler);
 #endif

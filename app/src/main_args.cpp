@@ -10,14 +10,14 @@
 #include "streaming_view.hpp"
 #include <regex>
 
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
 #include <switch.h>
 #endif
 
 using namespace brls;
 
 bool canStartApp(int argc, char** argv) {
-#ifdef __SWITCH__
+#ifdef PLATFORM_SWITCH
     AppletType at = appletGetAppletType();
     if (at != AppletType_Application && at != AppletType_SystemApplication) {
         auto dialog = new Dialog("error/applet_not_supported"_i18n);
