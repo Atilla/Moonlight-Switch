@@ -108,7 +108,6 @@
         },
         "debug": "调试",
         "debugging_view": "显示调试画面",
-        "decoder_threads": "解码器线程",
         "fps": "FPS",
         "guide_key": "向导键（立即按下）",
         "guide_key_buttons": "按键组合",
@@ -155,7 +154,6 @@
         "video_bitrate": "视频码率",
         "video_codec": "视频解码器",
         "volume_amplification": "允许放大音量",
-        "zero_threads": "0（不使用线程）"
     },
     "streaming": {
         "connection": "连接选项",

@@ -102,26 +102,6 @@ SettingsTab::SettingsTab() {
         }
     });
 
-    std::vector<std::string> decoders = {"settings/zero_threads"_i18n, "2", "3",
-                                         "4"};
-    decoder->setText("settings/decoder_threads"_i18n);
-    decoder->setData(decoders);
-    switch (Settings::instance().decoder_threads()) {
-        GET_SETTINGS(decoder, 0, 0);
-        GET_SETTINGS(decoder, 2, 1);
-        GET_SETTINGS(decoder, 3, 2);
-        GET_SETTINGS(decoder, 4, 3);
-        DEFAULT;
-    }
-    decoder->getEvent()->subscribe([](int selected) {
-        switch (selected) {
-            SET_SETTING(0, set_decoder_threads(0));
-            SET_SETTING(1, set_decoder_threads(2));
-            SET_SETTING(2, set_decoder_threads(3));
-            SET_SETTING(3, set_decoder_threads(4));
-            DEFAULT;
-        }
-    });
 
     std::vector<VideoCodec> supportedCodecs = {
 #ifndef PLATFORM_ANDROID

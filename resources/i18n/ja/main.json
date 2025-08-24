@@ -108,7 +108,6 @@
         },
         "debug": "デバッグ",
         "debugging_view": "デバッグビューを表示する",
-        "decoder_threads": "デコーダースレッド",
         "fps": "FPS",
         "guide_key": "ガイドキー (すぐにクリック)",
         "guide_key_buttons": "ボタンの組み合わせ",
@@ -155,7 +154,6 @@
         "video_bitrate": "ビデオビットレート",
         "video_codec": "ビデオコーデック",
         "volume_amplification": "ボリューム増幅を許可する",
-        "zero_threads": "0 (使用しないスレッド)"
     },
     "streaming": {
         "connection": "接続",

@@ -94,8 +94,6 @@ class Settings : public Singleton<Settings> {
     [[nodiscard]] bool click_by_tap() const { return m_click_by_tap; }
     void set_click_by_tap(bool click_by_tap) { m_click_by_tap = click_by_tap; }
 
-    void set_decoder_threads(int decoder_threads) { m_decoder_threads = decoder_threads; }
-    [[nodiscard]] int decoder_threads() const { return m_decoder_threads; }
 
     void set_frames_queue_size(int frames_queue_size) { m_frames_queue_size = frames_queue_size; }
     [[nodiscard]] int frames_queue_size() const { return m_frames_queue_size; }
@@ -192,7 +190,6 @@ class Settings : public Singleton<Settings> {
     int m_bitrate = 10000;
     bool m_enable_hdr = false;
     bool m_click_by_tap = false;
-    int m_decoder_threads = 4;
     int m_frames_queue_size = 3;
     bool m_sops = true;
     bool m_play_audio = false;

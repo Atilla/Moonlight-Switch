@@ -108,7 +108,6 @@
         },
         "debug": "Отладка",
         "debugging_view": "Показать окно отладки",
-        "decoder_threads": "Потоки декодера",
         "fps": "FPS",
         "guide_key": "Кнопка \"Guide\" (нажимается немедленно)",
         "guide_key_buttons": "Комбинация кнопок",
@@ -155,7 +154,6 @@
         "video_bitrate": "Битрейт видео",
         "video_codec": "Видео кодек",
         "volume_amplification": "Разрешить усиление громкости",
-        "zero_threads": "0 (Не использовать потоки)"
     },
     "streaming": {
         "connection": "Соединение",

@@ -117,15 +117,8 @@ int FFmpegVideoDecoder::setup(int video_format, int width, int height,
 
     m_decoder_context->flags2 |= AV_CODEC_FLAG2_FAST;
 
-    int decoder_threads = Settings::instance().decoder_threads();
-
-    if (decoder_threads == 0 || Settings::instance().use_hw_decoding()) {
-        m_decoder_context->thread_type = FF_THREAD_FRAME;
-        m_decoder_context->thread_count = 1;
-    } else {
-        m_decoder_context->thread_type = FF_THREAD_SLICE;
-        m_decoder_context->thread_count = decoder_threads;
-    }
+    m_decoder_context->thread_type = FF_THREAD_FRAME;
+    m_decoder_context->thread_count = 1;
 
     m_decoder_context->width = width;
     m_decoder_context->height = height;

@@ -108,7 +108,6 @@
         },
         "debug": "디버그",
         "debugging_view": "디버깅 보기 표시",
-        "decoder_threads": "디코더 스레드",
         "fps": "FPS",
         "guide_key": "가이드 키 (즉시 클릭)",
         "guide_key_buttons": "버튼 조합",
@@ -155,7 +154,6 @@
         "video_bitrate": "동영상 전송율",
         "video_codec": "동영상 코덱",
         "volume_amplification": "볼륨 증폭 허용",
-        "zero_threads": "0 (스레드 사용 안 함)"
     },
     "streaming": {
         "connection": "연결",

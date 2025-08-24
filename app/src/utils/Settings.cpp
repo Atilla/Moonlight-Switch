@@ -260,11 +260,6 @@ void Settings::load() {
                 m_click_by_tap = json_typeof(click_by_tap) == JSON_TRUE;
             }
             
-            if (json_t* decoder_threads = json_object_get(settings, "decoder_threads")) {
-                if (json_typeof(decoder_threads) == JSON_INTEGER) {
-                    m_decoder_threads = (int)json_integer_value(decoder_threads);
-                }
-            }
 
             if (json_t* frames_queue_size = json_object_get(settings, "frames_queue_size")) {
                 if (json_typeof(frames_queue_size) == JSON_INTEGER) {
@@ -496,7 +491,6 @@ void Settings::save() {
             json_object_set_new(settings, "video_codec", json_integer(m_video_codec));
             json_object_set_new(settings, "audio_backend", json_integer(m_audio_backend));
             json_object_set_new(settings, "bitrate", json_integer(m_bitrate));
-            json_object_set_new(settings, "decoder_threads", json_integer(m_decoder_threads));
             json_object_set_new(settings, "frames_queue_size", json_integer(m_frames_queue_size));
             json_object_set_new(settings, "enable_hdr", m_enable_hdr ? json_true() : json_false());
             json_object_set_new(settings, "click_by_tap", m_click_by_tap ? json_true() : json_false());

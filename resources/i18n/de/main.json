@@ -108,7 +108,6 @@
         },
         "debug": "Debug",
         "debugging_view": "Debugansicht anzeigen",
-        "decoder_threads": "Decoder Threads",
         "fps": "FPS",
         "guide_key": "Guide Taste (keine Verzögerung)",
         "guide_key_buttons": "Tastenkombination",
@@ -155,7 +154,6 @@
         "video_bitrate": "Video Bitrate",
         "video_codec": "Video Codec",
         "volume_amplification": "Lautstärkeverstärkung zulassen",
-        "zero_threads": "0 (Keine Threads benutzen)"
     },
     "streaming": {
         "connection": "Verbindung",

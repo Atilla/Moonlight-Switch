@@ -13,7 +13,10 @@
       "Bash(curl:*)",
       "mcp__ide__getDiagnostics",
       "Bash(rm:*)",
-      "Bash(ping:*)"
+      "Bash(ping:*)",
+      "Bash(git restore:*)",
+      "Bash(find:*)",
+      "Bash(g++:*)"
     ],
     "deny": [],
     "ask": [],

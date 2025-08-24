@@ -108,7 +108,6 @@
         },
         "debug": "除錯",
         "debugging_view": "顯示除錯畫面",
-        "decoder_threads": "解碼器執行緒",
         "fps": "FPS",
         "guide_key": "嚮導鍵（立即按下）",
         "guide_key_buttons": "按鍵組合",
@@ -155,7 +154,6 @@
         "video_bitrate": "影片位元率",
         "video_codec": "影片解碼器",
         "volume_amplification": "允許放大音量",
-        "zero_threads": "0（不使用執行緒）"
     },
     "streaming": {
         "connection": "連接選項",
