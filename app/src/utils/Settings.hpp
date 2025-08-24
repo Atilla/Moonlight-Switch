@@ -53,7 +53,7 @@ class Settings : public Singleton<Settings> {
 
     [[nodiscard]] std::string boxart_dir() const { return m_boxart_dir; }
 
-    [[nodiscard]] std::string log_path() const { return m_log_path; }
+    [[nodiscard]] std::string log_dir() const { return m_log_path; }
 
     [[nodiscard]] std::string gamepad_mapping_path() const { return m_gamepad_mapping_path; }
 

@@ -25,6 +25,7 @@
 #include "DiscoverManager.hpp"
 #include "MoonlightSession.hpp"
 #include "SwitchMoonlightSessionDecoderAndRenderProvider.hpp"
+#include "utils/LogManager.hpp"
 
 
 #ifdef _WIN32
@@ -74,7 +75,19 @@ int main(int argc, char* argv[]) {
 
     auto home = Application::getPlatform()->getHomeDirectory("Moonlight-Switch");
     Settings::instance().set_working_dir(home);
-    brls::Logger::info("Working dir, {}", home);
+    
+    // Initialize logging to file only if debug mode is enabled
+    if (Settings::instance().write_log()) {
+        if (LogManager::instance().initialize(Settings::instance().log_dir())) {
+            LogManager::instance().installCrashHandlers();
+            brls::Logger::info("File logging enabled, working dir: {}", home);
+        } else {
+            brls::Logger::error("Failed to initialize file logging, using console only");
+            brls::Logger::info("Working dir: {}", home);
+        }
+    } else {
+        brls::Logger::info("Working dir: {}", home);
+    }
 
     // Have the application register an action on every activity that will quit
     // when you press BUTTON_START
@@ -114,6 +127,11 @@ int main(int argc, char* argv[]) {
 
     GameStreamClient::instance().stop();
     DiscoverManager::instance().pause();
+    
+    // Shutdown logging if it was initialized
+    if (Settings::instance().write_log()) {
+        LogManager::instance().shutdown();
+    }
 
     // Exit
 #ifdef __SWITCH__
