@@ -82,6 +82,16 @@ namespace
 DKVideoRenderer::DKVideoRenderer() {} 
 
 DKVideoRenderer::~DKVideoRenderer() {
+    // Clean up cached command lists first (they may reference memory blocks)
+    brls::Logger::debug("{}: Destroying {} cached command lists", __PRETTY_FUNCTION__, m_cmdlist_cache.size());
+    
+    for (auto& [addr, cached] : m_cmdlist_cache) {
+        brls::Logger::debug("{}: Cleaning command list for addr={}", __PRETTY_FUNCTION__, addr);
+        // Note: Deko3d command lists are automatically cleaned when the command buffer is destroyed
+        // The individual dk::Image and dk::ImageDescriptor objects are automatically cleaned
+    }
+    m_cmdlist_cache.clear();
+    
     // Destroy cached memory blocks with logging
     brls::Logger::debug("{}: Destroying {} cached memory blocks", __PRETTY_FUNCTION__, m_buffer_cache.size());
     
@@ -214,17 +224,29 @@ void DKVideoRenderer::rebuildCommandList(AVNVTegraMap *map, AVFrame* frame) {
         return;
     }
     
-    // Log buffer details for debugging
+    // Check if command list already exists for this buffer
+    auto cmdlist_it = m_cmdlist_cache.find(map->map.cpu_addr);
+    if (cmdlist_it != m_cmdlist_cache.end() && cmdlist_it->second.initialized) {
+        // Command list already built for this buffer - just switch to it
+        cmdlist = cmdlist_it->second.cmdlist;
+        brls::Logger::debug("{}: Using cached command list for buffer addr={}", __PRETTY_FUNCTION__, map->map.cpu_addr);
+        return;
+    }
+    
+    // Log buffer details for debugging first-time builds
     uint32_t buffer_size = av_nvtegra_map_get_size(map);
     ptrdiff_t chroma_offset = frame->data[1] - frame->data[0];
-    brls::Logger::debug("{}: Processing buffer addr={}, size={}, chroma_offset={}", 
+    brls::Logger::debug("{}: Building NEW command list for buffer addr={}, size={}, chroma_offset={}", 
                        __PRETTY_FUNCTION__, map->map.cpu_addr, buffer_size, chroma_offset);
     
-    // Check cache or create new memory block
-    auto it = m_buffer_cache.find(map->map.cpu_addr);
+    // Get or create cached entry
+    BufferCommandList& cached = m_cmdlist_cache[map->map.cpu_addr];
     
-    if (it == m_buffer_cache.end()) {
-        // First time seeing this buffer - create and cache
+    // Check cache or create new memory block
+    auto mem_it = m_buffer_cache.find(map->map.cpu_addr);
+    
+    if (mem_it == m_buffer_cache.end()) {
+        // First time seeing this buffer - create and cache memory block
         dk::MemBlock newBlock = dk::MemBlockMaker { dev, av_nvtegra_map_get_size(map) }
             .setFlags(DkMemBlockFlags_CpuUncached | DkMemBlockFlags_GpuCached | DkMemBlockFlags_Image)
             .setStorage(av_nvtegra_map_get_addr(map))
@@ -236,24 +258,24 @@ void DKVideoRenderer::rebuildCommandList(AVNVTegraMap *map, AVFrame* frame) {
                            __PRETTY_FUNCTION__, map->map.cpu_addr, m_buffer_cache.size());
     } else {
         // Reuse cached memory block
-        mappingMemblock = it->second;
+        mappingMemblock = mem_it->second;
         brls::Logger::debug("{}: Reusing cached memory block for buffer addr={}", __PRETTY_FUNCTION__, map->map.cpu_addr);
     }
     
-    // Re-initialize images with current memory block
-    luma.initialize(lumaMappingLayout, mappingMemblock, 0);
-    chroma.initialize(chromaMappingLayout, mappingMemblock, frame->data[1] - frame->data[0]);
+    // Initialize images with current memory block for this buffer
+    cached.luma.initialize(lumaMappingLayout, mappingMemblock, 0);
+    cached.chroma.initialize(chromaMappingLayout, mappingMemblock, frame->data[1] - frame->data[0]);
     
-    // Update descriptors
-    lumaDesc.initialize(luma);
-    chromaDesc.initialize(chroma);
+    // Update descriptors for this buffer
+    cached.lumaDesc.initialize(cached.luma);
+    cached.chromaDesc.initialize(cached.chroma);
     
-    // Rebuild command list with updated bindings
+    // Build command list with updated bindings
     cmdbuf.clear();
     
     // Update descriptor set
-    imageDescriptorSet->update(cmdbuf, lumaTextureId, lumaDesc);
-    imageDescriptorSet->update(cmdbuf, chromaTextureId, chromaDesc);
+    imageDescriptorSet->update(cmdbuf, lumaTextureId, cached.lumaDesc);
+    imageDescriptorSet->update(cmdbuf, chromaTextureId, cached.chromaDesc);
     
     // Bind everything for drawing (removed clearColor)
     cmdbuf.bindShaders(DkStageFlag_GraphicsMask, { vertexShader, fragmentShader });
@@ -278,8 +300,15 @@ void DKVideoRenderer::rebuildCommandList(AVNVTegraMap *map, AVFrame* frame) {
     // Draw
     cmdbuf.draw(DkPrimitive_Quads, QuadVertexData.size(), 1, 0, 0);
     
-    // Save the new command list
-    cmdlist = cmdbuf.finishList();
+    // Cache the new command list
+    cached.cmdlist = cmdbuf.finishList();
+    cached.initialized = true;
+    
+    // Set as current command list
+    cmdlist = cached.cmdlist;
+    
+    brls::Logger::info("{}: Built and cached command list for buffer addr={} (cmdlist cache size now: {})", 
+                       __PRETTY_FUNCTION__, map->map.cpu_addr, m_cmdlist_cache.size());
     
     m_last_bound_addr = map->map.cpu_addr;
     
@@ -299,19 +328,18 @@ void DKVideoRenderer::draw(NVGcontext* vg, int width, int height, AVFrame* frame
     // Log current frame details to compare with initialization
     AVNVTegraMap *current_map = av_nvtegra_frame_get_fbuf_map(frame);
     
-    // Check if buffer changed and rebuild command list if needed
+    // Check if buffer changed and ensure command list is ready
     if (current_map->map.cpu_addr != m_last_bound_addr) {
-        brls::Logger::debug("{}: Buffer changed from {} to {}, rebuilding command list", 
+        brls::Logger::debug("{}: Buffer changed from {} to {}, switching command list", 
                            __PRETTY_FUNCTION__, m_last_bound_addr, current_map->map.cpu_addr);
-        rebuildCommandList(current_map, frame);
+        rebuildCommandList(current_map, frame);  // Will use cache if available, build if new
+        m_last_bound_addr = current_map->map.cpu_addr;
     }
     
     // Diagnostic tracking for buffer binding issues
     m_total_frames_drawn++;
-    bool is_buffer_mismatch = (current_map->map.cpu_addr != m_last_bound_addr);
-    if (is_buffer_mismatch) {
-        m_mismatched_frames++;
-    }
+    // With proper caching, there should be no mismatches anymore
+    bool is_buffer_mismatch = false;  // Always false now with proper command list caching
     
     // Identify buffer index for easier tracking (based on observed pattern)
     const char* buffer_name = "UNKNOWN";

@@ -23,6 +23,15 @@ struct Transformation {
     glm::vec4 uv_data;
 };
 
+struct BufferCommandList {
+    dk::Image luma;
+    dk::Image chroma;
+    dk::ImageDescriptor lumaDesc;
+    dk::ImageDescriptor chromaDesc;
+    DkCmdList cmdlist;
+    bool initialized = false;
+};
+
 class DKVideoRenderer : public IVideoRenderer {
   public:
     DKVideoRenderer();
@@ -66,11 +75,11 @@ class DKVideoRenderer : public IVideoRenderer {
 
     dk::ImageLayout lumaMappingLayout; 
     dk::ImageLayout chromaMappingLayout; 
-    dk::MemBlock mappingMemblock;
+    dk::MemBlock mappingMemblock;  // Current active memory block
 
+    // Legacy single instances - will be removed after migration
     dk::Image luma;
     dk::Image chroma;
-
     dk::ImageDescriptor lumaDesc;
     dk::ImageDescriptor chromaDesc;
 
@@ -88,6 +97,7 @@ class DKVideoRenderer : public IVideoRenderer {
     
     // Dynamic buffer binding support
     std::unordered_map<void*, dk::MemBlock> m_buffer_cache;  // Cache memory blocks per buffer
+    std::unordered_map<void*, BufferCommandList> m_cmdlist_cache;  // Cache complete command lists per buffer
     void* m_last_bound_addr = nullptr;  // Address of currently bound buffer
 };
 
