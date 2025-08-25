@@ -389,7 +389,7 @@ void DKVideoRenderer::draw(NVGcontext* vg, int width, int height, AVFrame* frame
     }
    
     queue.submitCommands(cmdlist);
-    queue.flush();
+    // queue.flush(); // Removed - let GPU work asynchronously
 
     m_video_render_stats.rendered_frames++;
 }
