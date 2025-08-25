@@ -229,7 +229,9 @@ void DKVideoRenderer::rebuildCommandList(AVNVTegraMap *map, AVFrame* frame) {
     if (cmdlist_it != m_cmdlist_cache.end() && cmdlist_it->second.initialized) {
         // Command list already built for this buffer - just switch to it
         cmdlist = cmdlist_it->second.cmdlist;
+#ifdef VERBOSE_FRAME_LOGGING
         brls::Logger::debug("{}: Using cached command list for buffer addr={}", __PRETTY_FUNCTION__, map->map.cpu_addr);
+#endif
         return;
     }
     
@@ -254,12 +256,16 @@ void DKVideoRenderer::rebuildCommandList(AVNVTegraMap *map, AVFrame* frame) {
         m_buffer_cache[map->map.cpu_addr] = newBlock;
         mappingMemblock = newBlock;
         
+#ifdef VERBOSE_FRAME_LOGGING
         brls::Logger::debug("{}: Created new memory block for buffer addr={} (cache size now: {})", 
                            __PRETTY_FUNCTION__, map->map.cpu_addr, m_buffer_cache.size());
+#endif
     } else {
         // Reuse cached memory block
         mappingMemblock = mem_it->second;
+#ifdef VERBOSE_FRAME_LOGGING
         brls::Logger::debug("{}: Reusing cached memory block for buffer addr={}", __PRETTY_FUNCTION__, map->map.cpu_addr);
+#endif
     }
     
     // Initialize images with current memory block for this buffer
@@ -315,12 +321,12 @@ void DKVideoRenderer::rebuildCommandList(AVNVTegraMap *map, AVFrame* frame) {
     // Initialize m_bound_buffer_addr on first frame for diagnostic compatibility
     if (!m_bound_buffer_addr) {
         m_bound_buffer_addr = map->map.cpu_addr;
+#ifdef VERBOSE_FRAME_LOGGING
         brls::Logger::debug("{}: Initialized diagnostic bound_buffer_addr to {}", __PRETTY_FUNCTION__, m_bound_buffer_addr);
+#endif
     }
 }
 
-int frames = 0;
-uint64_t timeCount = 0;
 
 void DKVideoRenderer::draw(NVGcontext* vg, int width, int height, AVFrame* frame, int imageFormat) {
     checkAndInitialize(width, height, frame);
@@ -330,12 +336,15 @@ void DKVideoRenderer::draw(NVGcontext* vg, int width, int height, AVFrame* frame
     
     // Check if buffer changed and ensure command list is ready
     if (current_map->map.cpu_addr != m_last_bound_addr) {
+#ifdef VERBOSE_FRAME_LOGGING
         brls::Logger::debug("{}: Buffer changed from {} to {}, switching command list", 
                            __PRETTY_FUNCTION__, m_last_bound_addr, current_map->map.cpu_addr);
+#endif
         rebuildCommandList(current_map, frame);  // Will use cache if available, build if new
         m_last_bound_addr = current_map->map.cpu_addr;
     }
     
+#ifdef VERBOSE_FRAME_LOGGING
     // Diagnostic tracking for buffer binding issues
     m_total_frames_drawn++;
     // With proper caching, there should be no mismatches anymore
@@ -356,7 +365,9 @@ void DKVideoRenderer::draw(NVGcontext* vg, int width, int height, AVFrame* frame
                        (void*)current_map->map.cpu_addr,
                        is_buffer_mismatch ? "≠" : "==",
                        m_last_bound_addr);
+#endif
     
+#ifdef VERBOSE_FRAME_LOGGING
     // Log statistics every 5 seconds
     uint64_t current_time = LiGetMillis();
     if (current_time - m_last_stats_log_time >= 5000) {
@@ -365,11 +376,10 @@ void DKVideoRenderer::draw(NVGcontext* vg, int width, int height, AVFrame* frame
                           __PRETTY_FUNCTION__, m_total_frames_drawn, m_mismatched_frames, mismatch_percentage);
         m_last_stats_log_time = current_time;
     }
-
-    uint64_t before_render = LiGetMillis();
+#endif
 
     if (!m_video_render_stats.rendered_frames) {
-        m_video_render_stats.measurement_start_timestamp = before_render;
+        m_video_render_stats.measurement_start_timestamp = LiGetMillis();
     }
 
     // Validate command list before submission
@@ -381,27 +391,16 @@ void DKVideoRenderer::draw(NVGcontext* vg, int width, int height, AVFrame* frame
     queue.submitCommands(cmdlist);
     queue.flush();
 
-    frames++;
-    timeCount += LiGetMillis() - before_render;
-
-    if (timeCount >= 5000) {
-        brls::Logger::debug("FPS: {}", frames / 5.0f);
-        frames = 0;
-        timeCount -= 5000;
-    }
-
-    m_video_render_stats.total_render_time += LiGetMillis() - before_render;
     m_video_render_stats.rendered_frames++;
 }
 
 VideoRenderStats* DKVideoRenderer::video_render_stats() {
-    // brls::Logger::info("{}", __PRETTY_FUNCTION__);
     m_video_render_stats.rendered_fps = (float) m_video_render_stats.rendered_frames /
         ((float) (LiGetMillis() - m_video_render_stats.measurement_start_timestamp) / 1000);
 
-
-    m_video_render_stats.rendering_time = (float)m_video_render_stats.total_render_time /
-            (float) m_video_render_stats.rendered_frames;
+    // Note: rendering_time removed as it was measuring CPU command submission time,
+    // not actual GPU rendering time, which is asynchronous
+    m_video_render_stats.rendering_time = 0.0f;
 
     return &m_video_render_stats;
 }

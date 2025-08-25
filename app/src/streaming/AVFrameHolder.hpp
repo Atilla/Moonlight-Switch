@@ -39,11 +39,12 @@ class AVFrameHolder : public Singleton<AVFrameHolder> {
   public:
     void push(AVFrame* frame) {
         m_frame_queue.push(frame);
-        stat ++;
         
         #ifdef PLATFORM_SWITCH
+        #ifdef VERBOSE_FRAME_LOGGING
         brls::Logger::debug("AVFrameHolder: push AVFrame ptr={}, queue_size={}", 
                            (void*)frame, m_frame_queue.size());
+        #endif
         #endif
     }
 
@@ -52,11 +53,12 @@ class AVFrameHolder : public Singleton<AVFrameHolder> {
 
         if (frame) {
             #ifdef PLATFORM_SWITCH
+            #ifdef VERBOSE_FRAME_LOGGING
             brls::Logger::debug("AVFrameHolder: get AVFrame ptr={}, queue_size_after_pop={}", 
                                (void*)frame, m_frame_queue.size());
             #endif
+            #endif
             fn(frame);
-            stat --;
         }
     }
 
@@ -66,15 +68,12 @@ class AVFrameHolder : public Singleton<AVFrameHolder> {
 
     void cleanup() {
         m_frame_queue.cleanup();
-        stat = 0;
     }
 
-    [[nodiscard]] int getStat() const { return stat; }
     [[nodiscard]] size_t getFakeFrameStat() const { return m_frame_queue.getFakeFrameUsage(); }
     [[nodiscard]] size_t getFrameDropStat() const { return m_frame_queue.getFramesDropStat(); }
     [[nodiscard]] size_t getFrameQueueSize() const { return m_frame_queue.size(); }
 
   private:
     AVFrameQueue m_frame_queue;
-    int stat = 0;
 };

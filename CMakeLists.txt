@@ -50,12 +50,19 @@ set(PROJECT_AUTHOR "XITRIX")
 set(PROJECT_ICON ${CMAKE_CURRENT_SOURCE_DIR}/resources/img/moonlight_icon.jpg)
 set(PROJECT_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/resources)
 
+# Options
+option(VERBOSE_FRAME_LOGGING "Enable verbose per-frame logging" OFF)
+
 add_definitions(
         -DAPP_VERSION="${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_ALTER}"
         -Dcimg_display=0
         -Dcimg_use_png
         -Dcimg_no_system_calls
         -DBRLS_I18N_PREFIX=\"main/\")
+
+if (VERBOSE_FRAME_LOGGING)
+    add_definitions(-DVERBOSE_FRAME_LOGGING)
+endif()
 
 if (PLATFORM_PSV OR PLATFORM_ANDROID)
     set(USE_OPENSSL_CRYPTO ON)
