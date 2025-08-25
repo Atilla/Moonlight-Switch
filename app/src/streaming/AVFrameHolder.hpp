@@ -40,12 +40,21 @@ class AVFrameHolder : public Singleton<AVFrameHolder> {
     void push(AVFrame* frame) {
         m_frame_queue.push(frame);
         stat ++;
+        
+        #ifdef PLATFORM_SWITCH
+        brls::Logger::debug("AVFrameHolder: push AVFrame ptr={}, queue_size={}", 
+                           (void*)frame, m_frame_queue.size());
+        #endif
     }
 
     void get(const std::function<void(AVFrame*)>& fn) {
         auto frame = m_frame_queue.pop();
 
         if (frame) {
+            #ifdef PLATFORM_SWITCH
+            brls::Logger::debug("AVFrameHolder: get AVFrame ptr={}, queue_size_after_pop={}", 
+                               (void*)frame, m_frame_queue.size());
+            #endif
             fn(frame);
             stat --;
         }

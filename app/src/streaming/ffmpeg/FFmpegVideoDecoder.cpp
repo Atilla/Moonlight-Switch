@@ -405,6 +405,14 @@ AVFrame* FFmpegVideoDecoder::get_frame(bool native_frame) {
         // DEKO decoder will work with hardware frame
         // Android already produce software Frame
         resultFrame = decodeFrame;
+        
+        #ifdef PLATFORM_SWITCH
+        // Log frame details for debugging
+        brls::Logger::debug("FFmpeg: AVFrame ptr={}, data[0]={}, data[1]={}", 
+                           (void*)resultFrame, 
+                           (void*)resultFrame->data[0], 
+                           (void*)resultFrame->data[1]);
+        #endif
 #else
 
 
