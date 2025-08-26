@@ -15,17 +15,15 @@ layout (std140, binding = 0) uniform Transformation
 
 void main()
 {
-    // Sample YUV from the two planes
-    float Y = texture2D(plane0, vTextureCoord).r;
-    float U = texture2D(plane1, vTextureCoord).r;
-    float V = texture2D(plane1, vTextureCoord).g;
+    float r, g, b, yt, ut, vt;
     
-    // Create YCbCr vector and apply offset
-    vec3 YCbCr = vec3(Y, U, V) - u.offset;
-    
-    // Use proper color space matrix from CPU for BT.601/BT.709/BT.2020 support
-    vec3 rgb = u.yuvmat * YCbCr;
-    
-    // Clamp to valid range and output
-    outColor = vec4(clamp(rgb, 0.0, 1.0), 1.0);
+    yt = texture2D(plane0, vTextureCoord).r;
+    ut = texture2D(plane1, vTextureCoord).r - 0.5;
+    vt = texture2D(plane1, vTextureCoord).g - 0.5;
+
+    r = yt + 1.13983*vt;
+    g = yt - 0.39465*ut - 0.58060*vt;
+    b = yt + 2.03211*ut;
+
+    outColor = vec4(r, g, b, 1.0);
 }
